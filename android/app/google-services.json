@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "609307343747",
+    "firebase_url": "https://appmgv1-1ac26-default-rtdb.firebaseio.com",
+    "project_id": "appmgv1-1ac26",
+    "storage_bucket": "appmgv1-1ac26.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:609307343747:android:b4665068696ef8cfd414b6",
+        "android_client_info": {
+          "package_name": "com.mgtecno.appmgtecnology"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvY80T4IS6leh2-YpKN_iYQrIyhVrXUxY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
