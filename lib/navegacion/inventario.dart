@@ -1,6 +1,11 @@
+import 'package:flutter/foundation.dart'; // Necesario para kIsWeb
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class inventarioPage extends StatelessWidget {
+  const inventarioPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,161 +25,54 @@ class inventarioPage extends StatelessWidget {
               TextEditingController precioCompraController =
                   TextEditingController();
               ValueNotifier<int> cantidadNotifier = ValueNotifier<int>(0);
+              ValueNotifier<File?> imageNotifier = ValueNotifier<File?>(null);
+              ValueNotifier<String?> imageUrlNotifier =
+                  ValueNotifier<String?>(null);
 
               return AlertDialog(
+                title: Text('Agregar Producto'),
                 content: SingleChildScrollView(
-                  child: Container(
-                    width: double.maxFinite,
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
-                        // Imagen de icono
-                        Center(
-                          child: CircleAvatar(
-                            radius: 40,
-                            child: Icon(Icons.checklist, size: 50),
-                          ),
+                        _buildFormSection('Nombre', nombreController),
+                        _buildFormSection('Descripción', descripcionController),
+                        _buildFormSection('Categoría', categoriaController),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _buildFormSection(
+                                  'Precio de Venta', precioVentaController,
+                                  isNumber: true),
+                            ),
+                            SizedBox(width: 16.0),
+                            Expanded(
+                              child: _buildFormSection(
+                                  'Precio de Compra', precioCompraController,
+                                  isNumber: true),
+                            ),
+                          ],
                         ),
-                        SizedBox(height: 10),
-                        // Cantidad
-                        Center(
-                          child: Column(
-                            children: [
-                              Text("Cantidad", style: TextStyle(fontSize: 18)),
-                              ValueListenableBuilder<int>(
-                                valueListenable: cantidadNotifier,
-                                builder: (context, cantidad, child) {
-                                  return Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(Icons.remove),
-                                        onPressed: () {
-                                          if (cantidad > 0) {
-                                            cantidadNotifier.value =
-                                                cantidad - 1;
-                                          }
-                                        },
-                                      ),
-                                      Text(
-                                        '$cantidad',
-                                        style: TextStyle(fontSize: 18),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(Icons.add),
-                                        onPressed: () {
-                                          cantidadNotifier.value = cantidad + 1;
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        // Nombre
-                        Text("Nombre:", style: TextStyle(fontSize: 18)),
-                        TextField(
-                          controller: nombreController,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: "Nombre del producto",
-                          ),
-                          style: TextStyle(fontSize: 14),
-                        ),
-                        SizedBox(height: 10),
-                        // Descripción
-                        Text("Descripción:", style: TextStyle(fontSize: 18)),
-                        TextField(
-                          controller: descripcionController,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: "Descripción del producto",
-                          ),
-                          style: TextStyle(fontSize: 14),
-                        ),
-                        SizedBox(height: 10),
-                        // Categoría
-                        Text("Categoría:", style: TextStyle(fontSize: 18)),
-                        TextField(
-                          controller: categoriaController,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: "Categoría del producto",
-                          ),
-                          style: TextStyle(fontSize: 14),
-                        ),
-                        SizedBox(height: 10),
-                        // Precio de venta
-                        Text("Precio de Venta:",
-                            style: TextStyle(fontSize: 18)),
-                        TextField(
-                          controller: precioVentaController,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: "Precio de venta del producto",
-                          ),
-                          style: TextStyle(fontSize: 14),
-                        ),
-                        SizedBox(height: 10),
-                        // Precio de compra
-                        Text("Precio de Compra:",
-                            style: TextStyle(fontSize: 18)),
-                        TextField(
-                          controller: precioCompraController,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            hintText: "Precio de compra del producto",
-                          ),
-                          style: TextStyle(fontSize: 14),
-                        ),
+                        _buildCantidadSection(cantidadNotifier),
+                        _buildImagePickerSection(
+                            imageNotifier, imageUrlNotifier, context),
                       ],
                     ),
                   ),
                 ),
                 actions: [
                   TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text("Cancelar"),
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text('Cancelar'),
                   ),
                   TextButton(
                     onPressed: () {
-                      // Aquí puedes usar los valores ingresados en los campos de texto
-                      String nombre = nombreController.text;
-                      String descripcion = descripcionController.text;
-                      String categoria = categoriaController.text;
-                      double precioVenta =
-                          double.parse(precioVentaController.text);
-                      double precioCompra =
-                          double.parse(precioCompraController.text);
-                      int cantidad = cantidadNotifier.value;
-
-                      // Aquí puedes hacer algo con los datos ingresados, como enviarlos a una base de datos, etc.
-
-                      // Cerrar el diálogo
+                      // Simplemente cerrar el diálogo sin realizar ninguna acción
                       Navigator.of(context).pop();
                     },
-                    child: Text("Guardar"),
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.blue,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
+                    child: Text('Guardar'),
                   ),
                 ],
               );
@@ -184,5 +82,187 @@ class inventarioPage extends StatelessWidget {
         child: Icon(Icons.add),
       ),
     );
+  }
+
+  Widget _buildFormSection(String label, TextEditingController controller,
+      {bool isNumber = false}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        controller: controller,
+        keyboardType: isNumber ? TextInputType.number : null,
+        decoration: InputDecoration(
+          labelText: label,
+          border: UnderlineInputBorder(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCantidadSection(ValueNotifier<int> cantidadNotifier) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text('Cantidad', style: TextStyle(fontSize: 18)),
+          ValueListenableBuilder<int>(
+            valueListenable: cantidadNotifier,
+            builder: (context, cantidad, child) {
+              return Row(
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.remove),
+                    onPressed: () {
+                      if (cantidad > 0) {
+                        cantidadNotifier.value = cantidad - 1;
+                      }
+                    },
+                  ),
+                  Text('$cantidad', style: TextStyle(fontSize: 18)),
+                  IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () {
+                      cantidadNotifier.value = cantidad + 1;
+                    },
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImagePickerSection(ValueNotifier<File?> imageNotifier,
+      ValueNotifier<String?> imageUrlNotifier, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Imagen del Producto', style: TextStyle(fontSize: 18)),
+          SizedBox(height: 8.0),
+          ValueListenableBuilder(
+            valueListenable: kIsWeb ? imageUrlNotifier : imageNotifier,
+            builder: (context, value, child) {
+              if (kIsWeb) {
+                String? imageUrl = value as String?;
+                return Column(
+                  children: [
+                    if (imageUrl != null)
+                      Image.network(
+                        imageUrl,
+                        height: 150,
+                        errorBuilder: (BuildContext context, Object error,
+                            StackTrace? stackTrace) {
+                          return Text('Error al cargar la imagen');
+                        },
+                      )
+                    else
+                      Container(
+                        height: 150,
+                        color: Colors.grey[300],
+                        child: Center(
+                          child: Text('No Image Selected'),
+                        ),
+                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => _pickImage(imageNotifier,
+                              imageUrlNotifier, ImageSource.gallery, context),
+                          child: Text('Seleccionar Imagen'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => _pickImage(imageNotifier,
+                              imageUrlNotifier, ImageSource.camera, context),
+                          child: Text('Tomar Foto'),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 8.0),
+                      height: 1.0,
+                      color: Colors.grey,
+                    ),
+                  ],
+                );
+              } else {
+                File? imageFile = value as File?;
+                return Column(
+                  children: [
+                    if (imageFile != null)
+                      Image.file(
+                        imageFile,
+                        height: 150,
+                        errorBuilder: (BuildContext context, Object error,
+                            StackTrace? stackTrace) {
+                          return Text('Error al cargar la imagen');
+                        },
+                      )
+                    else
+                      Container(
+                        height: 150,
+                        color: Colors.grey[300],
+                        child: Center(
+                          child: Text('No Image Selected'),
+                        ),
+                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => _pickImage(imageNotifier,
+                              imageUrlNotifier, ImageSource.gallery, context),
+                          child: Text('Seleccionar Imagen'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => _pickImage(imageNotifier,
+                              imageUrlNotifier, ImageSource.camera, context),
+                          child: Text('Tomar Foto'),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(top: 8.0),
+                      height: 1.0,
+                      color: Colors.grey,
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _pickImage(
+      ValueNotifier<File?> imageNotifier,
+      ValueNotifier<String?> imageUrlNotifier,
+      ImageSource source,
+      BuildContext context) async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? pickedFile = await picker.pickImage(source: source);
+      if (pickedFile != null) {
+        if (kIsWeb) {
+          imageUrlNotifier.value = pickedFile.path;
+        } else {
+          imageNotifier.value = File(pickedFile.path);
+        }
+      }
+    } catch (e) {
+      // Manejar cualquier error que ocurra durante la selección de la imagen
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error al seleccionar la imagen: $e'),
+        ),
+      );
+    }
   }
 }

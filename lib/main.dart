@@ -18,18 +18,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: SplashScreen(), // Pantalla de Splash
-      initialRoute:
-          '/splash', // Define la ruta inicial, puede ser tu pantalla de inicio o de splash
-
-      // Define las rutas de navegación
+      home: SplashScreen(),
+      initialRoute: '/splash',
       routes: {
-        '/splash': (context) =>
-            SplashScreen(), // Ruta para la pantalla de Splash
-        '/login': (context) =>
-            MyLoginPage(), // Ruta para la pantalla de inicio de sesión
-        '/principal': (context) =>
-            VentanaPrincipal(), // Ruta para la pantalla principal
+        '/splash': (context) => SplashScreen(),
+        '/login': (context) => MyLoginPage(),
+        '/principal': (context) => VentanaPrincipal(),
       },
     );
   }
